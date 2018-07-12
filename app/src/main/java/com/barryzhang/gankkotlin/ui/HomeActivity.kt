@@ -26,22 +26,23 @@ import com.barryzhang.gankkotlin.utils.DrawableUtil
 import com.barryzhang.gankkotlin.utils.openUrlWithBrowser
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder
 
+
 /**
  * barryhappy2010@gmail.com
  * https://github.com/barryhappy
  * http://www.barryzhang.com/
  * Created by Barry on 16/7/15
  */
-class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     val GITHUB_URL = "https://github.com/barryhappy/Gank.Kotlin"
 
     var currentFragmentIndex = 0
 
-    val toolbar : Toolbar by lazy { findViewById(R.id.toolbar) as Toolbar }
-    val fab : FloatingActionButton by lazy { findViewById(R.id.fab) as FloatingActionButton }
-    val drawerLayout by lazy { findViewById(R.id.drawer_layout) as DrawerLayout }
-    val navigationView by lazy{ findViewById(R.id.nav_view) as NavigationView }
+    val toolbar: Toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
+    val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
+    val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
 
     val fragmentList = SparseArray<BaseFragment<HomeActivity>>()
     val fragmentListStatus = SparseBooleanArray()
@@ -51,22 +52,22 @@ class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedLis
     override fun afterInject() {
         fab.setImageDrawable(DrawableUtil.buildMaterialDrawable(
                 MaterialDrawableBuilder.with(this)
-                        .setIcon( MaterialDrawableBuilder.IconValue.GITHUB_CIRCLE )
+                        .setIcon(MaterialDrawableBuilder.IconValue.GITHUB_CIRCLE)
                         .setColor(Color.WHITE)
                         .setSizeDp(20)))
-        fab.setOnClickListener { openUrlWithBrowser(this,GITHUB_URL) }
+        fab.setOnClickListener { openUrlWithBrowser(this, GITHUB_URL) }
 
         setSupportActionBar(toolbar)
-        val actionBarToggle =  ActionBarDrawerToggle(this,drawerLayout,toolbar,
+        val actionBarToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawerLayout.addDrawerListener(actionBarToggle)
         drawerLayout.closeDrawers()
         actionBarToggle.syncState()
 
-        setMenuIcon(R.id.nav_home,MaterialDrawableBuilder.IconValue.HOME )
-        setMenuIcon(R.id.nav_history,MaterialDrawableBuilder.IconValue.HISTORY )
-        setMenuIcon(R.id.nav_favorite,MaterialDrawableBuilder.IconValue.STAR )
-        setMenuIcon(R.id.nav_about,MaterialDrawableBuilder.IconValue.INFORMATION )
+        setMenuIcon(R.id.nav_home, MaterialDrawableBuilder.IconValue.HOME)
+        setMenuIcon(R.id.nav_history, MaterialDrawableBuilder.IconValue.HISTORY)
+        setMenuIcon(R.id.nav_favorite, MaterialDrawableBuilder.IconValue.STAR)
+        setMenuIcon(R.id.nav_about, MaterialDrawableBuilder.IconValue.INFORMATION)
         navigationView.setNavigationItemSelectedListener(this)
 
     }
@@ -75,8 +76,8 @@ class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedLis
         showFragment(0)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId) {
             R.id.nav_home -> showFragment(0)
             R.id.nav_history -> showFragment(1)
             R.id.nav_favorite -> showFragment(2)
@@ -86,30 +87,30 @@ class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedLis
         return true
     }
 
-    fun showFragment(index : Int){
-        if(fragmentList.get(index) == null){
-            fragmentList.put(index,newFragmentByIndex(index))
+    fun showFragment(index: Int) {
+        if (fragmentList.get(index) == null) {
+            fragmentList.put(index, newFragmentByIndex(index))
         }
 
         val transaction = supportFragmentManager.beginTransaction()
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-        for(i in 0..fragmentList.size()){
+        for (i in 0..fragmentList.size()) {
             val fragment = fragmentList.get(i) ?: continue
-            if(i != index && fragment.isAdded){
+            if (i != index && fragment.isAdded) {
                 transaction.hide(fragment)
-            }else if(fragment.isAdded){
+            } else if (fragment.isAdded) {
                 transaction.show(fragment)
-            }else{
-                transaction.add(R.id.mLayoutContent,fragment)
+            } else {
+                transaction.add(R.id.mLayoutContent, fragment)
             }
         }
         transaction.commit()
 
-        if(!fragmentListStatus.get(index)) {
-            fragmentListStatus.put(index,true)
-            when(index) {
+        if (!fragmentListStatus.get(index)) {
+            fragmentListStatus.put(index, true)
+            when (index) {
                 0 -> MainPresenter(MainRepository.instance, fragmentList.get(index) as MainFragment)
-                1 ->  HistoryPresenter(fragmentList.get(index) as HistoryFragment)
+                1 -> HistoryPresenter(fragmentList.get(index) as HistoryFragment)
                 2 -> FavoritePresenter(fragmentList.get(index) as FavoriteFragment)
             }
         }
@@ -117,21 +118,21 @@ class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedLis
         currentFragmentIndex = index
     }
 
-    fun newFragmentByIndex(index : Int ) : BaseFragment<HomeActivity> = when(index){
+    fun newFragmentByIndex(index: Int): BaseFragment<HomeActivity> = when (index) {
         0 -> MainFragment.newInstance()
         1 -> HistoryFragment.newInstance()
-        2-> FavoriteFragment.newInstance()
+        2 -> FavoriteFragment.newInstance()
         else -> MainFragment.newInstance()
     }
 
-    fun setPageTitle(title : String?){
+    fun setPageTitle(title: String?) {
         toolbar.title = title
     }
 
     override fun onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers()
-        } else if(currentFragmentIndex != 0){
+        } else if (currentFragmentIndex != 0) {
             showFragment(0)
         } else {
             super.onBackPressed()
@@ -140,8 +141,8 @@ class HomeActivity : BaseActivity() , NavigationView.OnNavigationItemSelectedLis
 
     }
 
-    private fun setMenuIcon(menuId : Int, icon: MaterialDrawableBuilder.IconValue){
-        navigationView.menu.findItem(menuId).icon =  DrawableUtil.buildMaterialDrawable(
+    private fun setMenuIcon(menuId: Int, icon: MaterialDrawableBuilder.IconValue) {
+        navigationView.menu.findItem(menuId).icon = DrawableUtil.buildMaterialDrawable(
                 MaterialDrawableBuilder.with(this)
                         .setColor(getResColor(R.color.menu_icon))
                         .setIcon(icon))

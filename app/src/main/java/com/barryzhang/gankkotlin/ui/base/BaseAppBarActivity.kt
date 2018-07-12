@@ -11,9 +11,9 @@ import com.barryzhang.gankkotlin.R
  */
 abstract class BaseAppBarActivity : BaseActivity() {
 
-    val mLayoutContent: ViewGroup by lazy { findViewById(R.id.mLayoutContent) as ViewGroup }
-    val fab: FloatingActionButton by lazy { findViewById(R.id.fab) as FloatingActionButton }
-    val toolbar : Toolbar by lazy { findViewById(R.id.toolbar) as Toolbar }
+    val mLayoutContent: ViewGroup by lazy { findViewById<ViewGroup>(R.id.mLayoutContent) }
+    val fab: FloatingActionButton by lazy { findViewById<FloatingActionButton>(R.id.fab) }
+    val toolbar: Toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(R.layout.activity_base_app_bar)
